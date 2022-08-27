@@ -9,12 +9,13 @@ __author__ = "Peter Szemraj"
 import argparse
 import gzip
 import logging
+import pprint as pp
 from pathlib import Path
 
 from cleantext import clean
 from tqdm import tqdm
 
-from utils import correct_spacing, rm_consecutive_duplicates, add_speakers
+from utils import add_speakers, correct_spacing, rm_consecutive_duplicates
 
 logging.basicConfig(
     level=logging.INFO,
@@ -27,12 +28,19 @@ logging.basicConfig(
 def clean_parsed_file(
     in_path: str or Path,
     lowercase: bool = False,
+    remove_duplicates: bool = True,
 ) -> list:
     """
     clean_parsed_file - a function to clean the parsed data in the input file and save it in the output file
+
+    :param in_path: input file path
+    :param lowercase: lowercase the text
+    :param remove_duplicates: remove consecutive duplicates in the file
+
+    :return: cleaned list of lines
     """
     in_path = Path(in_path)
-    logging.info(f"Cleaning:\t{in_path}")
+    logging.info(f"Cleaning:\t{in_path.name}")
 
     if in_path.suffix.split(".")[-1] == "gz":
         with gzip.open(
@@ -46,7 +54,7 @@ def clean_parsed_file(
         with open(in_path, "r", encoding="utf-8") as in_file:
             lines = in_file.readlines()
 
-    unique_lines = rm_consecutive_duplicates(lines)
+    unique_lines = rm_consecutive_duplicates(lines) if remove_duplicates else lines
     logging.info(
         f"Removed {len(lines) - len(unique_lines)} duplicate lines, will clean {len(unique_lines)} lines"
     )
@@ -72,9 +80,9 @@ def save_clean_list(clean_list: list, write_path: str or Path, out_format="txt")
     ], f"{out_format} is not a valid output format, use either 'txt' or 'gz'"
     write_path = Path(write_path)
     write_path = write_path.with_suffix(f".{out_format}")
-    write_path = str(write_path.resolve())
+    # write_path = str(write_path.resolve())
 
-    logging.info(f"Saving cleaned list to {write_path} with {out_format} format")
+    logging.info(f"Using format={out_format} for output")
     if out_format == "txt":
         with open(write_path, "w", encoding="utf-8") as out_file:
             for line in clean_list:
@@ -84,7 +92,7 @@ def save_clean_list(clean_list: list, write_path: str or Path, out_format="txt")
             for line in clean_list:
                 out_file.write(line.encode("utf-8"))
 
-    logging.info(f"Saved cleaned list to {write_path} with {out_format} format")
+    logging.info(f"Saved cleaned list to */{write_path.parent.name}/{write_path.name} with filetype:\t{out_format}")
 
     return write_path
 
@@ -126,6 +134,13 @@ def get_parser():
         default="txt",
         help="Output format for the cleaned dialogues (txt or gz)",
     )
+    parser.add_argument(
+        "--remove_all_duplicates",
+        action="store_true",
+        default=False,
+        help="Remove consecutive duplicates in EVERY file, not just the 'dialogue' duplicates",
+    )
+
     parser.add_argument(
         "-s",
         "--make-script",
@@ -170,7 +185,7 @@ def get_parser():
 if __name__ == "__main__":
 
     args = get_parser().parse_args()
-    logging.info(f"Arguments: {args}")
+    logging.info(f"Arguments: {pp.pformat(vars(args))}")
 
     # standard arguments
     in_path = Path(args.in_dir)
@@ -186,6 +201,7 @@ if __name__ == "__main__":
     assert out_path.is_dir(), f"{out_path} is not a directory"
     lowercase = args.lowercase
     out_format = args.out_format
+    remove_all_duplicates = args.remove_all_duplicates
 
     # script arguments
     make_script = args.make_script
@@ -203,7 +219,11 @@ if __name__ == "__main__":
         _base = file.stem.split(".")[
             0
         ]  # necessary for the script to work with the gz files
-        clean_list = clean_parsed_file(file, lowercase)
+        clean_list = clean_parsed_file(
+            in_path=file,
+            lowercase=lowercase,
+            remove_duplicates="dial" in _base or remove_all_duplicates,
+        )
         if make_script and "dial" in _base:
 
             out_list = add_speakers(
@@ -221,7 +241,6 @@ if __name__ == "__main__":
             _out = out_path / f"cleaned_{_base}.{out_format}"
 
         _ = save_clean_list(clean_list=out_list, write_path=_out, out_format=out_format)
-        logging.info(f"Saved cleaned list to {_out}")
 
     logging.info(f"Cleaned {len(files)} files, outputs are in:\n\t{out_path}")
 

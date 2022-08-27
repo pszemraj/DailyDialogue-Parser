@@ -57,7 +57,7 @@ def add_speakers(
     """
 
     logging.info(
-        f"Adding speakers:\n\tSpeaker 1:{speaker_one}\t\tSpeaker2{speaker_two}\n\tDelimiters:\t<{speaker_start_char}> and <{speaker_end_char}>\n\tTotal dialogue lines: {len(textlist)}"
+        f"Adding speakers:\n\tSpeaker 1: {speaker_one}\t\tSpeaker 2: {speaker_two}\n\tDelimiters:\t<{speaker_start_char}> and <{speaker_end_char}>\n\tTotal dialogue lines: {len(textlist)}"
     )
     newlist = []
     for i in range(len(textlist)):
