@@ -32,4 +32,8 @@ def correct_spacing(text:str) -> str:
     text = re.sub(r'^\s+|\s+$', '', text)
     # remove spaces that come before a punctuation mark
     text = re.sub(r'\s+(\W)', r'\1', text)
+    # remove spaces that come after apostrophes or single quotes. "Here' s a test" -> "Here's a test"
+    text = re.sub(r"([\'])\s+", r"\1", text)
+    # text = re.sub(r"(\w)'(\w)", r"\1'\2", text)
+
     return text
