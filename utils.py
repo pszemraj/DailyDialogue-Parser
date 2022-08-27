@@ -8,6 +8,7 @@ import re
 
 from pathlib import Path
 
+
 def rm_consecutive_duplicates(textlist: list) -> list:
     """
     rm_consecutive_duplicates - given a list of strings, remove consecutive duplicates
@@ -81,7 +82,7 @@ def add_speakers(
     return newlist
 
 
-def gzip2text(gzip_file: str or Path, out_path: str or Path=None) -> Path:
+def gzip2text(gzip_file: str or Path, out_path: str or Path = None) -> Path:
     """
     gzip2text - convert a gzip file to a text file.
     """
@@ -91,7 +92,9 @@ def gzip2text(gzip_file: str or Path, out_path: str or Path=None) -> Path:
     _base = gzip_file.stem.split(".")[0]
     out_path = out_path / f"{_base}.txt" if out_path.is_dir() else out_path
 
-    with gzip.open(gzip_file, "rb") as in_file, open(out_path, "w", encoding="utf-8") as out_file:
+    with gzip.open(gzip_file, "rb") as in_file, open(
+        out_path, "w", encoding="utf-8"
+    ) as out_file:
         for line in in_file:
             out_file.write(line.decode("utf-8"))
 

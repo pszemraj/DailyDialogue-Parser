@@ -79,8 +79,11 @@ def save_clean_list(clean_list: list, write_path: str or Path, out_format="txt")
         "gz",
     ], f"{out_format} is not a valid output format, use either 'txt' or 'gz'"
     write_path = Path(write_path)
-    write_path = write_path.with_suffix(".txt") if out_format == "txt" else write_path.with_suffix(".txt.gz")
-
+    write_path = (
+        write_path.with_suffix(".txt")
+        if out_format == "txt"
+        else write_path.with_suffix(".txt.gz")
+    )
 
     logging.info(f"Using format={out_format} for output")
     if out_format == "txt":
@@ -88,11 +91,13 @@ def save_clean_list(clean_list: list, write_path: str or Path, out_format="txt")
             for line in clean_list:
                 out_file.write(line)
     elif out_format == "gz":
-        with gzip.open(write_path, "wt", encoding='utf-8') as out_file:
+        with gzip.open(write_path, "wt", encoding="utf-8") as out_file:
             for line in clean_list:
                 out_file.write(line)
 
-    logging.info(f"Saved cleaned list to */{write_path.parent.name}/{write_path.name} with filetype:\t{out_format}")
+    logging.info(
+        f"Saved cleaned list to */{write_path.parent.name}/{write_path.name} with filetype:\t{out_format}"
+    )
 
     return write_path
 
@@ -200,7 +205,9 @@ if __name__ == "__main__":
 
     assert out_path.is_dir(), f"{out_path} is not a directory"
     lowercase = args.lowercase
-    out_format = args.out_format.replace(".", "") # remove any . from the out_format in case the user entered a file extension
+    out_format = args.out_format.replace(
+        ".", ""
+    )  # remove any . from the out_format in case the user entered a file extension
     remove_all_duplicates = args.remove_all_duplicates
 
     # script arguments
