@@ -13,7 +13,7 @@ This fork adds the following dependencies:
 
 They can be installed by using `pip` after cloning with the below shell script:
 
-```shell
+```sh
 git clone https://github.com/pszemraj/DailyDialogue-Parser.git
 cd DailyDialogue-Parser
 pip install -r requirements.txt
@@ -28,6 +28,7 @@ Once the parser is done, the outputs can be cleaned with the `clean_parsed_data.
 The primary use case is to clean the outputs for use in a text generation framework. The script will remove duplicate lines of dialogue and normalize whitespace to "standard" whitespace.
 
 Usage:
+
 
 ```shell
 python clean_parsed_data.py [-h] [-i IN_DIR] [-o OUT_DIR] [-l] [-f OUT_FORMAT] [--remove_all_duplicates]
