@@ -54,11 +54,21 @@ def add_speakers(
 
         The input list of strings is assumed to be in alternating speaker order.
         The resulting list of strings is in alternating speaker order. with the speaker names on one line, and the dialogue on the next line, then the next speaker, etc.
-    """
 
+        The speaker start and end characters are used to mark the start and end of the speaker name. This is relevant for when you train and ultmately evaluate/use a model for dialogue, as using "Person Alpha:" you can find where their response starts, and accordingly where their response ends with where the next speaker's name begins.
+
+    :param textlist: list of strings
+    :param speaker_one: name of the first speaker, defaults to "Person Alpha"
+    :param speaker_two: name of the second speaker, defaults to "Person Beta"
+    :param speaker_start_char: character to start the speaker name, defaults to ""
+
+    :return: list of strings with speakers added
+    """
+    textlist = [str(i) for i in textlist]
     logging.info(
         f"Adding speakers:\n\tSpeaker 1: {speaker_one}\t\tSpeaker 2: {speaker_two}\n\tDelimiters:\t<{speaker_start_char}> and <{speaker_end_char}>\n\tTotal dialogue lines: {len(textlist)}"
     )
+
     newlist = []
     for i in range(len(textlist)):
         if i % 2 == 0:
