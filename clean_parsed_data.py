@@ -79,8 +79,8 @@ def save_clean_list(clean_list: list, write_path: str or Path, out_format="txt")
         "gz",
     ], f"{out_format} is not a valid output format, use either 'txt' or 'gz'"
     write_path = Path(write_path)
-    write_path = write_path.with_suffix(f".{out_format}")
-    # write_path = str(write_path.resolve())
+    write_path = write_path.with_suffix(".txt") if out_format == "txt" else write_path.with_suffix(".txt.gz")
+
 
     logging.info(f"Using format={out_format} for output")
     if out_format == "txt":
@@ -88,9 +88,9 @@ def save_clean_list(clean_list: list, write_path: str or Path, out_format="txt")
             for line in clean_list:
                 out_file.write(line)
     elif out_format == "gz":
-        with gzip.open(write_path, "wt") as out_file:
+        with gzip.open(write_path, "wt", encoding='utf-8') as out_file:
             for line in clean_list:
-                out_file.write(line.encode("utf-8"))
+                out_file.write(line)
 
     logging.info(f"Saved cleaned list to */{write_path.parent.name}/{write_path.name} with filetype:\t{out_format}")
 
@@ -109,7 +109,7 @@ def get_parser():
         "-i",
         "--in_dir",
         type=str,
-        help='Input directory containing the dialogues as text files. Example: "train/"',
+        help='Input dir containing the dialogues as text or .gz files i.e. "train/"',
         required=True,
     )
     parser.add_argument(
@@ -118,7 +118,7 @@ def get_parser():
         type=str,
         required=False,
         default=None,
-        help="Output directory for the parsed dialogues",
+        help="Output dir for the parsed dialogues",
     )
     parser.add_argument(
         "-l",
@@ -200,7 +200,7 @@ if __name__ == "__main__":
 
     assert out_path.is_dir(), f"{out_path} is not a directory"
     lowercase = args.lowercase
-    out_format = args.out_format
+    out_format = args.out_format.replace(".", "") # remove any . from the out_format in case the user entered a file extension
     remove_all_duplicates = args.remove_all_duplicates
 
     # script arguments

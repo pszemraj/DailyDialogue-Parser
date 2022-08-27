@@ -46,15 +46,15 @@ def parse_data(in_dir: str or Path, out_dir: str or Path):
 
     out_dial = gzip.open(
         out_dial_path,
-        "w",
+        "wb",
     )
     out_emo = gzip.open(
         out_emo_path,
-        "w",
+        "wb",
     )
     out_act = gzip.open(
         out_act_path,
-        "w",
+        "wb",
     )
     pbar = tqdm(
         desc="Parsing",
@@ -93,7 +93,8 @@ def parse_data(in_dir: str or Path, out_dir: str or Path):
                 seq = seq[1:]
             if seq[-1] == " ":
                 seq = seq[:-1]
-
+            emo = str(emo)
+            act = str(act)
             out_dial.write(seq.encode("utf-8"))
             out_dial.write("\n".encode("utf-8"))
             out_emo.write(emo.encode("utf-8"))
