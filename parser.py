@@ -1,3 +1,5 @@
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
 """
     parser.py - a parser for the daily dialog dataset. Adapted from the original repo https://github.com/Sanghoon94/DailyDialogue-Parser by Sanghoon Kang
 """
