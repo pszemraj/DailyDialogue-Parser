@@ -39,3 +39,30 @@ def correct_spacing(text: str) -> str:
     # text = re.sub(r"(\w)'(\w)", r"\1'\2", text)
 
     return text
+
+
+def add_speakers(
+    textlist: list,
+    speaker_one: str = "Person Alpha",
+    speaker_two: str = "Person Beta",
+    sign_start="",
+    sign_end=":",
+) -> list:
+    """
+    add_speakers - add speakers to a list of strings, forming a "dialogue script".
+
+        The input list of strings is assumed to be in alternating speaker order.
+        The resulting list of strings is in alternating speaker order. with the speaker names on one line, and the dialogue on the next line, then the next speaker, etc.
+    """
+
+    newlist = []
+    for i in range(len(textlist)):
+        if i % 2 == 0:
+            newlist.append(sign_start + speaker_one + sign_end + "\n")
+            newlist.append(textlist[i] + "\n")
+        else:
+            # speaker two
+            newlist.append(sign_start + speaker_two + sign_end + "\n")
+            newlist.append(textlist[i] + "\n")
+
+    return newlist

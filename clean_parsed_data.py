@@ -14,7 +14,7 @@ from pathlib import Path
 from cleantext import clean
 from tqdm import tqdm
 
-from utils import correct_spacing, rm_consecutive_duplicates
+from utils import correct_spacing, rm_consecutive_duplicates, add_speakers
 
 logging.basicConfig(
     level=logging.INFO,
@@ -126,35 +126,59 @@ def get_parser():
         default="txt",
         help="Output format for the cleaned dialogues (txt or gz)",
     )
+    parser.add_argument(
+        "-s",
+        "--make-script",
+        action="store_true",
+        default=False,
+        help="Add speakers to the dialogue lines",
+    )
     return parser
 
 
 if __name__ == "__main__":
+
     args = get_parser().parse_args()
     logging.info(f"Arguments: {args}")
+
     in_path = Path(args.in_dir)
     assert in_path.is_dir(), f"{in_path} is not a valid directory"
+
     if args.out_dir is None:
         out_path = in_path / "cleaned"
         out_path.mkdir(exist_ok=True)
     else:
         out_path = Path(args.out_dir)
         out_path.mkdir(exist_ok=True)
-    # out_path = Path(args.out_dir) if args.out_dir else in_path.parent / "cleaned"
+
     assert out_path.is_dir(), f"{out_path} is not a directory"
     lowercase = args.lowercase
     out_format = args.out_format
+    make_script = args.make_script
 
     out_path.mkdir(exist_ok=True)
     FORMATS = [".txt", ".gz"]
     files = [f for f in in_path.iterdir() if f.is_file() and f.suffix in FORMATS]
 
     for file in tqdm(files, desc="Cleaning"):
+
+        _base = file.stem.split(".")[
+            0
+        ]  # necessary for the script to work with the gz files
         clean_list = clean_parsed_file(file, lowercase)
-        _out_name = out_path / f"cleaned_{file.stem}.{out_format}"
-        _ = save_clean_list(
-            clean_list=clean_list, write_path=_out_name, out_format=out_format
-        )
-    logging.info(f"Cleaned {len(files)} files")
-    logging.info(f"Saved to:\t{out_path}")
+        if make_script and "dial" in _base:
+
+            out_list = add_speakers(clean_list)
+            _out = out_path / f"cleaned_script_{_base}.{out_format}"
+            logging.info(f"added speakers to {file.name}")
+
+        else:
+            out_list = clean_list
+            _out = out_path / f"cleaned_{_base}.{out_format}"
+
+        _ = save_clean_list(clean_list=out_list, write_path=_out, out_format=out_format)
+        logging.info(f"Saved cleaned list to {_out}")
+
+    logging.info(f"Cleaned {len(files)} files, outputs are in:\n\t{out_path}")
+
     print("Done")
