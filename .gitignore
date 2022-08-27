@@ -1,0 +1,17 @@
+# python system files
+*__pycache__/
+*vscode/
+
+# Environments
+.env
+.venv
+env/
+venv/
+ENV/
+env.bak/
+venv.bak/
+
+# data files (to add to repo, use git add --force
+*data/
+*.txt
+*.gz
