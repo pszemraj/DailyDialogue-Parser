@@ -1,8 +1,9 @@
 # DailyDialogue-Parser
 
-Parser for the [DailyDialogue Dataset](http://yanran.li/dailydialog). This fork has been created to adapt the syntax, and also to add cleaning features relevant for using DailyDialogue in a text generation framework.
+Parser for the [DailyDialogue Dataset](http://yanran.li/dailydialog). This fork has been created to adapt the syntax and add cleaning features relevant to using DailyDialogue in a text generation framework.
 
-Note that while _this code_ is released under the MIT license, the dataset is not; it is `CC BY-NC-SA 4.0` licensed.
+Note that while _this code_ is released under the MIT license, the dataset is not; it is `CC BY-NC-SA 4.0`.
+
 ## Installation & Base Usage
 
 This fork adds the following dependencies:
@@ -18,13 +19,13 @@ cd DailyDialogue-Parser
 pip install -r requirements.txt
 ```
 
-You can then run `parser.py` as detailed in the original README (see bottom of this page).
+You can run `parser.py` as detailed in the original README (see bottom of this page).
 
 ## cleaning outputs
 
 Once the parser is done, the outputs can be cleaned with the `clean_parsed_data.py` script.
 
-The primary use case is to clean the outputs for use in a text generation framework. The script will remove duplicate lines of dialogue, and normalize whitespace to "standard" whitespace.
+The primary use case is to clean the outputs for use in a text generation framework. The script will remove duplicate lines of dialogue and normalize whitespace to "standard" whitespace.
 
 Usage:
 
@@ -38,7 +39,7 @@ Call `python clean_parsed_data.py -h` for more information.
 
 ### Dialogue Script: Adding Speaker Pseudo-Labels
 
-An additional added feature is the ability to add speaker "labels" or "identifying tokens" to the dialogue. This allows for the identification of the speaker of each line of dialogue, which is important to have for text generation to extract the response of a given speaker relative to some prompt (_as opposed to a continuation of the prompt, etc._).
+An added feature is the ability to add speaker "labels" or "identifying tokens" to the dialogue. This allows for the identification of the speaker of each line of dialogue, which is important for text generation to extract the response of a given speaker relative to some prompt (_as opposed to a continuation of the prompt, etc._).
 
 Adding speakers to the output dialogue file is done via the `--make-script` flag (`-s`). Argument switches are detailed in the below table.
 
