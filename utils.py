@@ -4,6 +4,7 @@ utils.py - utility functions for cleaning the data
 
 import re
 
+
 def rm_consecutive_duplicates(textlist: list) -> list:
     """
     rm_consecutive_duplicates - given a list of strings, remove consecutive duplicates
@@ -17,7 +18,8 @@ def rm_consecutive_duplicates(textlist: list) -> list:
             newlist.append(textlist[i])
     return newlist
 
-def correct_spacing(text:str) -> str:
+
+def correct_spacing(text: str) -> str:
     """
     correct_spacing - fixes the spacing in a string.
 
@@ -27,11 +29,11 @@ def correct_spacing(text:str) -> str:
     """
 
     # remove duplicate spaces
-    text = re.sub(r'\s+', ' ', text)
+    text = re.sub(r"\s+", " ", text)
     # remove spaces at start/end of strings
-    text = re.sub(r'^\s+|\s+$', '', text)
+    text = re.sub(r"^\s+|\s+$", "", text)
     # remove spaces that come before a punctuation mark
-    text = re.sub(r'\s+(\W)', r'\1', text)
+    text = re.sub(r"\s+(\W)", r"\1", text)
     # remove spaces that come after apostrophes or single quotes. "Here' s a test" -> "Here's a test"
     text = re.sub(r"([\'])\s+", r"\1", text)
     # text = re.sub(r"(\w)'(\w)", r"\1'\2", text)

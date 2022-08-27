@@ -9,7 +9,6 @@ __author__ = "Peter Szemraj"
 import argparse
 import gzip
 import logging
-import sys
 from pathlib import Path
 
 from cleantext import clean
@@ -20,7 +19,8 @@ from utils import correct_spacing, rm_consecutive_duplicates
 logging.basicConfig(
     level=logging.INFO,
     format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
-    filename="LOGFILE_clean_parsed_data.log", filemode="w",
+    filename="LOGFILE_clean_parsed_data.log",
+    filemode="w",
 )
 
 
@@ -34,11 +34,12 @@ def clean_parsed_file(
     in_path = Path(in_path)
     logging.info(f"Cleaning:\t{in_path}")
 
-    if in_path.suffix.split('.')[-1] == "gz":
-        with gzip.open(in_path,
-               "rt",
-               encoding="utf-8",
-               ) as in_file:
+    if in_path.suffix.split(".")[-1] == "gz":
+        with gzip.open(
+            in_path,
+            "rt",
+            encoding="utf-8",
+        ) as in_file:
             lines = in_file.read().splitlines()
     else:
         logging.info(f"Assuming {in_path.name} is a text file")
@@ -46,7 +47,9 @@ def clean_parsed_file(
             lines = in_file.readlines()
 
     unique_lines = rm_consecutive_duplicates(lines)
-    logging.info(f"Removed {len(lines) - len(unique_lines)} duplicate lines, will clean {len(unique_lines)} lines")
+    logging.info(
+        f"Removed {len(lines) - len(unique_lines)} duplicate lines, will clean {len(unique_lines)} lines"
+    )
 
     cleaned_lines = []
     for line in unique_lines:
@@ -59,7 +62,7 @@ def clean_parsed_file(
     return cleaned_lines
 
 
-def save_clean_list(clean_list:list, write_path:str or Path, out_format="txt"):
+def save_clean_list(clean_list: list, write_path: str or Path, out_format="txt"):
     """
     save_clean_list - a function to save the cleaned list to a file
     """
@@ -149,7 +152,9 @@ if __name__ == "__main__":
     for file in tqdm(files, desc="Cleaning"):
         clean_list = clean_parsed_file(file, lowercase)
         _out_name = out_path / f"cleaned_{file.stem}.{out_format}"
-        _ = save_clean_list(clean_list=clean_list, write_path=_out_name, out_format=out_format)
+        _ = save_clean_list(
+            clean_list=clean_list, write_path=_out_name, out_format=out_format
+        )
     logging.info(f"Cleaned {len(files)} files")
     logging.info(f"Saved to:\t{out_path}")
     print("Done")
