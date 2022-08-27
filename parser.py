@@ -1,5 +1,9 @@
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
 """
-    parser.py - a parser for the daily dialog dataset. Adapted from the original repo https://github.com/Sanghoon94/DailyDialogue-Parser by Sanghoon Kang
+    parser.py - a parser for the daily dialog dataset.
+
+    Adapted from the original repo https://github.com/Sanghoon94/DailyDialogue-Parser by Sanghoon Kang
 """
 
 __author__ = "Sanghoon Kang"
@@ -11,6 +15,8 @@ import sys
 from pathlib import Path
 
 from tqdm import tqdm
+
+from utils import gzip2text
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -42,15 +48,15 @@ def parse_data(in_dir: str or Path, out_dir: str or Path):
 
     out_dial = gzip.open(
         out_dial_path,
-        "w",
+        "wb",
     )
     out_emo = gzip.open(
         out_emo_path,
-        "w",
+        "wb",
     )
     out_act = gzip.open(
         out_act_path,
-        "w",
+        "wb",
     )
     pbar = tqdm(
         desc="Parsing",
@@ -89,7 +95,8 @@ def parse_data(in_dir: str or Path, out_dir: str or Path):
                 seq = seq[1:]
             if seq[-1] == " ":
                 seq = seq[:-1]
-
+            emo = str(emo)
+            act = str(act)
             out_dial.write(seq.encode("utf-8"))
             out_dial.write("\n".encode("utf-8"))
             out_emo.write(emo.encode("utf-8"))
@@ -117,6 +124,18 @@ def parse_data(in_dir: str or Path, out_dir: str or Path):
     out_act.close()
 
 
+def convert2text(dir: Path):
+    """
+    convert2text - converts all .gz files in a directory to text
+
+    Args:
+        dir (Path): the directory containing the .gz files
+    """
+    dir = Path(dir)
+    for file in tqdm(dir.glob("*.gz"), desc="Converting to text"):
+        gzip2text(gzip_file=file)
+
+
 def get_parser():
     """
     get_parser - a helper function for the argparse module
@@ -139,6 +158,12 @@ def get_parser():
         help="Output directory for the parsed dialogues",
         required=True,
     )
+    parser.add_argument(
+        "-t",
+        "--save_text",
+        action="store_true",
+        help="save as text files in addition to gzip files",
+    )
     return parser
 
 
@@ -148,6 +173,7 @@ if __name__ == "__main__":
     logging.info(f"args:\n{args}")
     in_dir = Path(args.in_dir)
     out_dir = Path(args.out_dir)
+    save_text = args.save_text
 
     if not in_dir.is_absolute():
         logging.info(
@@ -171,4 +197,7 @@ if __name__ == "__main__":
 
     parse_data(in_dir, out_dir)
 
+    if save_text:
+        logging.info("Converting to text")
+        convert2text(out_dir)
     print("Done")
