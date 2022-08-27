@@ -2,6 +2,7 @@
 utils.py - utility functions for cleaning the data
 """
 
+import logging
 import re
 
 
@@ -45,8 +46,8 @@ def add_speakers(
     textlist: list,
     speaker_one: str = "Person Alpha",
     speaker_two: str = "Person Beta",
-    sign_start="",
-    sign_end=":",
+    speaker_start_char="",
+    speaker_end_char=":",
 ) -> list:
     """
     add_speakers - add speakers to a list of strings, forming a "dialogue script".
@@ -55,14 +56,14 @@ def add_speakers(
         The resulting list of strings is in alternating speaker order. with the speaker names on one line, and the dialogue on the next line, then the next speaker, etc.
     """
 
+    logging.info(
+        f"Adding speakers:\n\tSpeaker 1:{speaker_one}\t\tSpeaker2{speaker_two}\n\tDelimiters:\t<{speaker_start_char}> and <{speaker_end_char}>\n\tTotal dialogue lines: {len(textlist)}"
+    )
     newlist = []
     for i in range(len(textlist)):
         if i % 2 == 0:
-            newlist.append(sign_start + speaker_one + sign_end + "\n")
-            newlist.append(textlist[i] + "\n")
+            newlist.append(f"{speaker_start_char}{speaker_one}{speaker_end_char}\n")
         else:
-            # speaker two
-            newlist.append(sign_start + speaker_two + sign_end + "\n")
-            newlist.append(textlist[i] + "\n")
-
+            newlist.append(f"{speaker_start_char}{speaker_two}{speaker_end_char}\n")
+        newlist.append(textlist[i] + "\n")
     return newlist

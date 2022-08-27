@@ -133,6 +133,37 @@ def get_parser():
         default=False,
         help="Add speakers to the dialogue lines",
     )
+    parser.add_argument(
+        "-s1",
+        "--speaker-one",
+        type=str,
+        default="Person Alpha",
+        required=False,
+        help="Speaker one for the script, default: Person Alpha",
+    )
+    parser.add_argument(
+        "-s2",
+        "--speaker-two",
+        type=str,
+        default="Person Beta",
+        required=False,
+        help="Speaker two for the script, default: Person Beta",
+    )
+    parser.add_argument(
+        "-start",
+        "--speaker-start-char",
+        type=str,
+        default="",
+        help="Speaker start char for the script, default: empty string",
+    )
+    parser.add_argument(
+        "-end",
+        "--speaker-end-char",
+        type=str,
+        default=":",
+        help="Speaker end char for the script, default: ':'",
+    )
+
     return parser
 
 
@@ -141,6 +172,7 @@ if __name__ == "__main__":
     args = get_parser().parse_args()
     logging.info(f"Arguments: {args}")
 
+    # standard arguments
     in_path = Path(args.in_dir)
     assert in_path.is_dir(), f"{in_path} is not a valid directory"
 
@@ -154,7 +186,13 @@ if __name__ == "__main__":
     assert out_path.is_dir(), f"{out_path} is not a directory"
     lowercase = args.lowercase
     out_format = args.out_format
+
+    # script arguments
     make_script = args.make_script
+    speaker_one = args.speaker_one
+    speaker_two = args.speaker_two
+    speaker_start_char = args.speaker_start_char
+    speaker_end_char = args.speaker_end_char
 
     out_path.mkdir(exist_ok=True)
     FORMATS = [".txt", ".gz"]
@@ -168,7 +206,13 @@ if __name__ == "__main__":
         clean_list = clean_parsed_file(file, lowercase)
         if make_script and "dial" in _base:
 
-            out_list = add_speakers(clean_list)
+            out_list = add_speakers(
+                clean_list,
+                speaker_one=speaker_one,
+                speaker_two=speaker_two,
+                speaker_start_char=speaker_start_char,
+                speaker_end_char=speaker_end_char,
+            )
             _out = out_path / f"cleaned_script_{_base}.{out_format}"
             logging.info(f"added speakers to {file.name}")
 
